@@ -27,7 +27,7 @@ try {
     $mail->setFrom('rajkishore7414@gmail.com', 'Student Registration');
 
     // Receiver
-    $mail->addAddress('rakishore111894@gmail.com');
+    $mail->addAddress('rakishore7414@gmail.com');
 
     // Content
     $mail->isHTML(true);
