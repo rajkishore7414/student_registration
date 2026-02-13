@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Student Registration</title>
+
 </head>
 <body>
 
