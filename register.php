@@ -2,6 +2,11 @@
 
 include 'config.php';
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'vendor/autoload.php';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $name = $_POST['name'];
@@ -9,40 +14,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $phone = $_POST['phone'];
     $course = $_POST['course'];
 
-    // Insert into database
     $sql = "INSERT INTO students (name, email, phone, course)
             VALUES ('$name', '$email', '$phone', '$course')";
 
     if (mysqli_query($conn, $sql)) {
 
-        // ✅ EMAIL PART STARTS HERE
+        $mail = new PHPMailer(true);
 
-        $to = $email;
-        $subject = "Registration Successful";
+        try {
 
-        $message = "
-        Hello $name,
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'rajkishore7414@gmail.com';
+            $mail->Password = 'osrn wqwr hgug qfzm';
+            $mail->SMTPSecure = 'tls';
+            $mail->Port = 587;
 
-        Thank you for registering.
+            $mail->setFrom('rajkishore7414@gmail.com', 'Student Registration');
 
-        Course: $course
+            // 🔥 VERY IMPORTANT
+            // Email comes from FORM now
+            $mail->addAddress($email, $name);
 
-        Regards,
-        Admin Team
-        ";
+            $mail->isHTML(true);
+            $mail->Subject = 'Registration Successful';
+            $mail->Body = "
+                Hello $name,<br><br>
+                ✅ Your registration is successful!<br>
+                Course: <b>$course</b><br><br>
+                Thank you.
+            ";
 
-        $headers = "From: admin@student.com";
+            $mail->send();
 
-        if(mail($to, $subject, $message, $headers)){
-            echo "Registration Successful! Confirmation email sent.";
-        } else {
-            echo "Registered, but email not sent.";
+            echo "✅ Registration successful. Email sent!";
+
+        } catch (Exception $e) {
+
+            echo "Registered but email failed: {$mail->ErrorInfo}";
         }
 
     } else {
-        echo "Error: " . mysqli_error($conn);
-    }
 
+        echo "Database Error!";
+    }
 }
 
 ?>
